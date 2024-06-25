@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity '0.8.0';
+pragma solidity 0.8.0;
 
 contract ERC20 {
 
     mapping (address => uint256) _balances;
-    mapping(address mapping (address => uint256)) _allowance;
+    mapping(address => mapping (address => uint256)) _allowance;
     uint256 immutable _totalSupply;
 
     event transfer(address indexed _to, uint256 indexed _value);
