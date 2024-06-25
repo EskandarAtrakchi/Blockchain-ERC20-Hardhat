@@ -8,21 +8,23 @@ contract ERC20 {
     mapping(address => mapping (address => uint256)) _allowance;
     uint256 immutable _totalSupply;
 
+    uint8 constant DECIMALS = 18;
+
     event transfer(address indexed _to, uint256 indexed _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
-    uint8 constant DECIMALS = 18;
+    
 
     constructor () {
         _balances[msg.sender] = 21000000 * 10 ** DECIMALS;
         _totalSupply = _balances[msg.sender];
     }
     
-    function name() public pure returns (string) {
+    function name() public pure returns (string memory) {
         return "TestToken";
     }
 
-    function symbol() public pure returns (string) {
+    function symbol() public pure returns (string memory) {
         return "TT";
     }
 
@@ -38,7 +40,7 @@ contract ERC20 {
         return _balances[_owner];
     }
 
-    function transfer(address _to, uint256 _value) public returns (bool success) {
+    function transfer(address _to, uint256 _value) public returns (bool) {
         require (_balances[msg.sender] >= _value , 'Not enough funds');
         _balances[msg.sender] = _balances[msg.sender] - _value; 
         _balances[_to] = _balances[_to] + _value;
@@ -48,20 +50,20 @@ contract ERC20 {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
         require (_allowance[_from][msg.sender] >= _value, 'No allowance.');
         require (_balances[_from] >= _value , 'No funds.');
 
-        _allowance[_from][msg.sender] = _allowance[_from][msg.sender] - _value;
-        _balances[_from] = _balances[_from] - _value; 
-        _balances[_to] = _balances[_to] + _value;
+        _allowance[_from][msg.sender] -= _value;
+        _balances[_from] -= _value; 
+        _balances[_to] += _value;
 
         return true;
     }
 
-    function approve(address _spender, uint256 _value) public returns (bool success) {
+    function approve(address _spender, uint256 _value) public returns (bool) {
 
-        _allowance[msg.sender][_spender] = _allowance[msg.sender][_spender] + _value;
+        _allowance[msg.sender][_spender] = _value;
 
         emit Approval(msg.sender, _spender, _value);
         return true;
