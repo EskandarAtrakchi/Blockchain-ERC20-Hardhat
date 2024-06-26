@@ -15,7 +15,8 @@
     "ts-node": "^10.9.2"
   },
   "dependencies": {
-    "bignumber.js": "^9.1.2"
+    "bignumber.js": "^9.1.2",
+    "ethers": "^6.13.1"
   },
   "directories": {
     "test": "test"

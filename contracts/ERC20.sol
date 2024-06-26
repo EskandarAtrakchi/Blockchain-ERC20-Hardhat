@@ -10,7 +10,7 @@ contract ERC20 {
 
     uint8 constant DECIMALS = 18;
 
-    event transfer(address indexed _to, uint256 indexed _value);
+    event Transfer(address indexed _to, uint256 indexed _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
     
@@ -18,6 +18,7 @@ contract ERC20 {
     constructor () {
         _balances[msg.sender] = 21000000 * 10 ** DECIMALS;
         _totalSupply = _balances[msg.sender];
+        
     }
     
     function name() public pure returns (string memory) {
@@ -42,10 +43,10 @@ contract ERC20 {
 
     function transfer(address _to, uint256 _value) public returns (bool) {
         require (_balances[msg.sender] >= _value , 'Not enough funds');
-        _balances[msg.sender] = _balances[msg.sender] - _value; 
-        _balances[_to] = _balances[_to] + _value;
+        _balances[msg.sender] -= _value; 
+        _balances[_to] += _value;
 
-        emit transfer(_to , _value);
+        emit Transfer(_to , _value);
 
         return true;
     }
