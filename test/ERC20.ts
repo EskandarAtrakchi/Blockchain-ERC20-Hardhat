@@ -4,6 +4,8 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import Bignumber from "bignumber.js";
 
+const DECIMALS = 18;
+
 describe("ERC20", function () {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
@@ -23,7 +25,7 @@ describe("ERC20", function () {
       const { erc20, owner } = await loadFixture(deployERC20);
 
       expect(await (await erc20.balanceOf(owner.address)).toString()).to.equal(
-        new Bignumber(21000000).multipliedBy(1e18).toFixed(0)
+        new Bignumber(21000000).multipliedBy(10 ** DECIMALS).toFixed(0)
       );
     });
   });
@@ -43,4 +45,52 @@ describe("ERC20", function () {
       expect(await erc20.symbol()).to.equal("TT");
     });
   });
+
+  describe("Deployment", function () {
+    it("Should set the right decimals", async function () {
+      const { erc20 } = await loadFixture(deployERC20);
+
+      expect(await erc20.decimals()).to.equal(DECIMALS.toString());
+    });
+  });
+
+  describe("Deployment", function () {
+    it("Should transfer", async function () {
+      const { erc20, otherAccount, owner } = await loadFixture(deployERC20);
+
+      const balanceToTransfer = new Bignumber(1000 * 10 ** DECIMALS);
+
+      expect((await erc20.balanceOf(otherAccount.address)).toString()).to.equal(
+        "0"
+      );
+
+      const ownerBalanceBefore = await erc20.balanceOf(owner.address);
+
+      await erc20.transfer(otherAccount.address, balanceToTransfer.toFixed(0));
+
+      expect((await erc20.balanceOf(otherAccount.address)).toString()).to.equal(
+        balanceToTransfer.toFixed(0)
+      );
+
+      expect((await erc20.balanceOf(owner.address)).toString()).to.equal(
+        new Bignumber(ownerBalanceBefore.toString())
+          .minus(balanceToTransfer.toString())
+          .toFixed(0)
+      );
+    });
+  });
+
+  // describe("Deployment", function () {
+  //   it("Should revert with no balance", async function () {
+  //     const { erc20, otherAccount, anotherAccount } = await loadFixture(
+  //       deployERC20
+  //     );
+
+  //     expect(
+  //       await erc20
+  //         .connect(otherAccount)
+  //         .transfer(anotherAccount.address, "1000")
+  //     ).to.be.revertedWith("no balance");
+  //   });
+  // });
 });
