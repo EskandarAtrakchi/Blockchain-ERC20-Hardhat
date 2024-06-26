@@ -2,7 +2,7 @@ import { time ,loadFixture } from "@nomicfoundation/hardhat-toolbox/network-help
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import Bignumber from "bignumber.js";
+import Bignumber from "Bignumber.js";
 
 const DECIMALS = 18;
 
@@ -92,14 +92,14 @@ describe("ERC20", function () {
 
   describe("Deployment", function () {
     it("Should approve", async function () {
-      const { erc20, owner, otherAccount, AnotherAccount } = await deployERC20();
+      const { erc20, owner, otherAccount, AnotherAccount } =
+        await deployERC20();
 
       const AMOOUNT_TO_APPROVE = 50;
       await erc20.approve(otherAccount.address, AMOOUNT_TO_APPROVE);
       expect(
         await erc20.allowance(owner.address, otherAccount.address)
-      ).to.equal(AMOOUNT_TO_APPROVE)
-        
+      ).to.equal(AMOOUNT_TO_APPROVE);
     });
   });
 
@@ -116,4 +116,66 @@ describe("ERC20", function () {
     });
   });
 
+  describe("Deployment", function () {
+    it("Should transfer when allowance and balance are sufficient", async function () {
+      const { erc20, owner, otherAccount, AnotherAccount } =
+        await deployERC20();
+      const DECIMALS = 18;
+      const AMOUNT_TO_APPROVE = new Bignumber(100).multipliedBy(
+        new Bignumber(10).pow(DECIMALS)
+      );
+      const AMOUNT_TO_TRY = new Bignumber(50).multipliedBy(
+        new Bignumber(10).pow(DECIMALS)
+      );
+
+      await erc20.approve(otherAccount.address, AMOUNT_TO_APPROVE.toFixed());
+
+      const ownerBalanceBefore = new Bignumber(
+        await erc20.balanceOf(owner.address)
+      );
+      const otherAccountBalanceBefore = new Bignumber(
+        await erc20.balanceOf(otherAccount.address)
+      );
+      const anotherAccountBalanceBefore = new Bignumber(
+        await erc20.balanceOf(AnotherAccount.address)
+      );
+      const allowanceBefore = new Bignumber(
+        await erc20.allowance(owner.address, otherAccount.address)
+      );
+
+      await erc20
+        .connect(otherAccount)
+        .transferFrom(
+          owner.address,
+          AnotherAccount.address,
+          AMOUNT_TO_TRY.toFixed()
+        );
+
+      const ownerBalanceAfter = new Bignumber(
+        await erc20.balanceOf(owner.address)
+      );
+      const otherAccountBalanceAfter = new Bignumber(
+        await erc20.balanceOf(otherAccount.address)
+      );
+      const anotherAccountBalanceAfter = new Bignumber(
+        await erc20.balanceOf(AnotherAccount.address)
+      );
+      const allowanceAfter = new Bignumber(
+        await erc20.allowance(owner.address, otherAccount.address)
+      );
+
+      expect(ownerBalanceAfter.toFixed()).to.equal(
+        ownerBalanceBefore.minus(AMOUNT_TO_TRY).toFixed()
+      );
+      expect(otherAccountBalanceAfter.toFixed()).to.equal(
+        otherAccountBalanceBefore.toFixed()
+      );
+      expect(anotherAccountBalanceAfter.toFixed()).to.equal(
+        anotherAccountBalanceBefore.plus(AMOUNT_TO_TRY).toFixed()
+      );
+      expect(allowanceAfter.toFixed()).to.equal(
+        allowanceBefore.minus(AMOUNT_TO_TRY).toFixed()
+      );
+    });
+  });
 });
