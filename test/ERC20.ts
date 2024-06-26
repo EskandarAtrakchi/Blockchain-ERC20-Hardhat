@@ -83,9 +83,23 @@ describe("ERC20", function () {
   describe("Deployment", function () {
     it("Should revert with no balance", async function () {
       const { erc20, otherAccount, AnotherAccount } = await deployERC20();
+
       await expect(
         erc20.connect(otherAccount).transfer(AnotherAccount.address, 1000)
       ).to.be.revertedWith("Not enough funds");
+    });
+  });
+
+  describe("Deployment", function () {
+    it("Should approve", async function () {
+      const { erc20, owner, otherAccount, AnotherAccount } = await deployERC20();
+
+      const AMOOUNT_TO_APPROVE = 50;
+      await erc20.approve(otherAccount.address, AMOOUNT_TO_APPROVE);
+      expect(
+        await erc20.allowance(owner.address, otherAccount.address)
+      ).to.equal(AMOOUNT_TO_APPROVE)
+        
     });
   });
 });
