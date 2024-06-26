@@ -102,4 +102,18 @@ describe("ERC20", function () {
         
     });
   });
+
+  describe("Deployment", function () {
+    it("Should revert with no allowance", async function () {
+      const { erc20, owner, otherAccount, AnotherAccount } =
+        await deployERC20();
+      const AMOUNT_TO_TRY = 50;
+      await expect(
+        erc20
+          .connect(otherAccount)
+          .transferFrom(owner.address, AnotherAccount.address, AMOUNT_TO_TRY)
+      ).to.be.revertedWith("No allowance.");
+    });
+  });
+
 });
