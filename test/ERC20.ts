@@ -22,8 +22,8 @@ describe("ERC20", function () {
     it("Should set the right balance", async function () {
       const { erc20, owner } = await loadFixture(deployERC20);
 
-      expect((await erc20.balanceOf(owner.address)).toString()).to.equal(
-        new Bignumber(21000000).multipliedBy(1e18).toString()
+      expect(await (await erc20.balanceOf(owner.address)).toString()).to.equal(
+        new Bignumber(21000000).multipliedBy(1e18).toFixed(0)
       );
     });
   });

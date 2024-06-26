@@ -18,7 +18,7 @@ contract ERC20 {
     constructor () {
         _balances[msg.sender] = 21000000 * 10 ** DECIMALS;
         _totalSupply = _balances[msg.sender];
-        
+
     }
     
     function name() public pure returns (string memory) {
@@ -29,15 +29,15 @@ contract ERC20 {
         return "TT";
     }
 
-    function decimals() public pure returns (uint256) {
+    function decimals() public view returns (uint256) {
         return DECIMALS;
     }
 
-    function totalSupply() public pure returns (uint256) {
+    function totalSupply() public view returns (uint256) {
         return _totalSupply;
     }
 
-    function balanceOf(address _owner) public pure returns (uint256 balance) {
+    function balanceOf(address _owner) public view returns (uint256 balance) {
         return _balances[_owner];
     }
 
@@ -70,7 +70,7 @@ contract ERC20 {
         return true;
     }
 
-    function allowance(address _owner, address _spender) public pure returns (uint256 remaining) {
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
         return _allowance[_owner][_spender];
     }
 }
