@@ -80,17 +80,12 @@ describe("ERC20", function () {
     });
   });
 
-  // describe("Deployment", function () {
-  //   it("Should revert with no balance", async function () {
-  //     const { erc20, otherAccount, anotherAccount } = await loadFixture(
-  //       deployERC20
-  //     );
-
-  //     expect(
-  //       await erc20
-  //         .connect(otherAccount)
-  //         .transfer(anotherAccount.address, "1000")
-  //     ).to.be.revertedWith("no balance");
-  //   });
-  // });
+  describe("Deployment", function () {
+    it("Should revert with no balance", async function () {
+      const { erc20, otherAccount, AnotherAccount } = await deployERC20();
+      await expect(
+        erc20.connect(otherAccount).transfer(AnotherAccount.address, 1000)
+      ).to.be.revertedWith("Not enough funds");
+    });
+  });
 });
