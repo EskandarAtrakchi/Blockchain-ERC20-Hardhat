@@ -28,4 +28,19 @@ describe("ERC20", function () {
     });
   });
 
+  describe("Deployment", function () {
+    it("Should set the right name", async function () {
+      const { erc20 } = await loadFixture(deployERC20);
+
+      expect(await erc20.name()).to.equal("TestToken");
+    });
+  });
+
+  describe("Deployment", function () {
+    it("Should set the right symbol", async function () {
+      const { erc20 } = await loadFixture(deployERC20);
+
+      expect(await erc20.symbol()).to.equal("TT");
+    });
+  });
 });
